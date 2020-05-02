@@ -1,5 +1,14 @@
 var express = require('express');
 var router = express.Router();
+var userController = require('../controllers/userController');
+
+/* Sign up */
+router.post('/admin/create-user', userController.signup);
+
+/* Login
+  Change route later
+*/
+router.post('/login', userController.login)
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
