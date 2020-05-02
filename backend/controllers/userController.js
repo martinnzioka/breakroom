@@ -14,38 +14,6 @@
 const { pool } = require('../database/database');
 const { hasher, comparePassword } = require('pcypher');
 const jwt = require('jsonwebtoken');
-const { roles } = require('../roles');
-
-exports.grantAcces = function(action, resource) {
-    return async (req, res, next) => {
-        try{
-            const permission = roles.can(req.user.role)[action](resource);
-            if (!permission.granted) {
-                return res.status(401).json({
-                    message: "You don't have enough permission to perform this action."
-                });
-            }
-            next()
-        } catch (error) {
-            next(error)
-        }
-    }
-}
-
-exports.allowIfLoggedIn = async (req, res, next) => {
-    try {
-        const user = res.locals.loggedInUser;
-        if (!user) {
-            return res.status(401).json({
-                message: 'You need to be logged in to access this.'
-            });
-        }
-        req.user = user;
-        next()
-    } catch (error) {
-        next(error)
-    }
-}
 
 exports.signup = (req, res, next) => {
     (async() => {
@@ -94,7 +62,7 @@ exports.signup = (req, res, next) => {
                 )
             }
             // Querying Database.        
-            const text = `INSERT INTO employeeDetails(firstName, lastName, email, userPassword, gender, jobRole, department, userRole, userAddress, createdOn) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`
+            const text = `INSERT INTO employeeDetails(firstName, lastName, email, userpassword, gender, jobRole, department, userRole, userAddress, createdOn) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`
             const values = Object.values(data); //Convert Object to Array       
             pool.query(text , values).then(
                 () => {
@@ -121,7 +89,7 @@ exports.signup = (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const { email, user_password } = req.body;
-        pool.query(`SELECT user_id, email, userPassword, userRole FROM employeeDetails WHERE email = $1`, [email]).then(
+        pool.query(`SELECT user_id, email, userpassword, userRole FROM employeeDetails WHERE email = $1`, [email]).then(
             (user) => {
                 (async() => {
                     try {
