@@ -11,6 +11,15 @@ CREATE TABLE employeeDetails (
     department VARCHAR(50),
     userAddress VARCHAR(50),
     userRole VARCHAR(13) DEFAULT 'user',
-    createdOn VARCHAR(150) NOT NULL,
+    createdOn VARCHAR(150) UNIQUE NOT NULL,
     lastLogin VARCHAR(150)
+);
+
+CREATE TABLE gifPosts (
+    gif_id BIGSERIAL PRIMARY KEY,
+    title TEXT,
+    gifurl TEXT UNIQUE NOT NULL,
+    createdon TIMESTAMP,
+    createdby BIGINT,
+    gifdata JSON NOT NULL
 );
