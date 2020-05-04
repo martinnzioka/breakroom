@@ -3,8 +3,8 @@ const ac = new Accesscontrol();
 
 // Roles for this application/API.
 exports.roles = ( function() {
-    ac.grant('user').createOwn('gif').readOwn('gif').updateOwn('gif')
-    ac.grant('supervisor').extend('user').readAny('gif')
-    ac.grant('admin').extend(['supervisor', 'user']).updateAny('gif').deleteAny('gif')
+    ac.grant('user').createOwn('fu-relation').readOwn('fu-relation').updateOwn('fu-relation')
+    ac.grant('supervisor').extend('user').readAny('fu-relation')
+    ac.grant('admin').extend(['supervisor', 'user']).updateAny('fu-relation').deleteAny('fu-relation')
     return ac;
 })();
