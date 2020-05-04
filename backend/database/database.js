@@ -19,5 +19,5 @@ async function connectionTest() {
 
 }
 
-module.exports = connectionTest();
+connectionTest();
 module.exports = { pool };
