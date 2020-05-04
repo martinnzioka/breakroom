@@ -17,9 +17,17 @@ CREATE TABLE employeeDetails (
 
 CREATE TABLE gifPosts (
     gif_id BIGSERIAL PRIMARY KEY,
-    title TEXT,
+    title TEXT DEFAULT '<No Title>',
     gifurl TEXT UNIQUE NOT NULL,
     createdon TIMESTAMP,
     createdby BIGINT,
     gifdata JSON NOT NULL
+);
+
+CREATE TABLE articlePosts (
+    article_id BIGSERIAL PRIMARY KEY,
+    title TEXT DEFAULT '<No Title>',
+    article TEXT NOT NULL,
+    createdon VARCHAR(150) UNIQUE NOT NULL,
+    createdby BIGINT
 );

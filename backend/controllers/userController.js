@@ -58,8 +58,9 @@ exports.signup = (req, res, next) => {
                     }
                 ).catch (
                     (error) => {
-                        res.status(400).json({
-                            message: {
+                        res.status(500).json({
+                            status: 'Internal Server Error',
+                            data: {
                                 name: error.name,
                                 code: error.code,
                                 detail: error.detail,
@@ -103,13 +104,15 @@ exports.login = async (req, res, next) => {
                     try {
                         // Password from request body
                         const plainTextPassword = user_password;
+                        console.log(plainTextPassword)
                         // Return boolean true or false
-                        const comparison = (() => {
+                        const comparison = (async() => {
                             // Null and undefined check.
                             if (!plainTextPassword) return;
                             comparePassword(plainTextPassword, user.rows[0].userpassword).then(result => { return result }
                             ).catch ( error => { return error });}
                             )();
+                        console.log(comparison)
                         if (!comparison) return next(
                             res.status(401).json({
                                 message: 'Password is not correct'
