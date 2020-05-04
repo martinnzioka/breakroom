@@ -3,7 +3,7 @@ var router = express.Router();
 var userController = require('../controllers/userController');
 
 /* Sign up */
-router.post('/admin/create-user', userController.signup);
+router.post('/create-user', userController.signup);
 
 /* Login
   Change route later

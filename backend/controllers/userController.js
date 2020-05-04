@@ -8,6 +8,8 @@
     SECRET_KEY=InputRandomKeyHere
     KEY_LENGTH=16
 
+    [TODO]
+ * Handle proper error sending depending on the operation done.
 */
 
 
@@ -18,9 +20,15 @@ const jwt = require('jsonwebtoken');
 exports.signup = (req, res, next) => {
     (async() => {
         try {
+            
             //Hashing
-            const plaintTextPassword = req.body.user_password;
-            const password = await hasher(plaintTextPassword);
+            const plainTextPassword = req.body.user_password;
+            const password = hasher(plainTextPassword).then(result => { return result }
+                ).catch (
+                    (error) => { return error }
+                );
+            // null and undefined checker.
+            if (!password) return;            
             //console.log(password);
             let data = {
                 firstName: req.body.first_name,
@@ -50,7 +58,7 @@ exports.signup = (req, res, next) => {
                     }
                 ).catch (
                     (error) => {
-                        res.status(500).json({
+                        res.status(400).json({
                             message: {
                                 name: error.name,
                                 code: error.code,
@@ -70,7 +78,7 @@ exports.signup = (req, res, next) => {
                 }
             ).catch(
                 (error) => {
-                    res.status(500).json({
+                    res.status(400).json({
                         message: {
                             name: error.name,
                             code: error.code,
@@ -94,9 +102,14 @@ exports.login = async (req, res, next) => {
                 (async() => {
                     try {
                         // Password from request body
-                        const plaintTextPassword = user_password;
+                        const plainTextPassword = user_password;
                         // Return boolean true or false
-                        const comparison = await comparePassword(plaintTextPassword, user.rows[0].userpassword);
+                        const comparison = (() => {
+                            // Null and undefined check.
+                            if (!plainTextPassword) return;
+                            comparePassword(plainTextPassword, user.rows[0].userpassword).then(result => { return result }
+                            ).catch ( error => { return error });}
+                            )();
                         if (!comparison) return next(
                             res.status(401).json({
                                 message: 'Password is not correct'
