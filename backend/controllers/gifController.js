@@ -3,6 +3,7 @@ const cloudinary = require('cloudinary').v2;
 
 exports.createGif = async (req, res, next) => {
     try {
+        // 'gif' should be upload link/path of media.
         const { title, gif } = req.body;
         cloudinary.uploader.upload(gif).then(
             async function(result) {
