@@ -7,6 +7,7 @@
     "test": "jasmine"
   },
   "keywords": [
+    "node",
     "heroku"
   ],
   "dependencies": {
@@ -27,5 +28,6 @@
   },
   "engines": {
     "node": "10.x"
-  }
+  },
+  "image": "heroku/nodejs"
 }
