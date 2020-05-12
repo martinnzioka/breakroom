@@ -1,3 +1,7 @@
+/**
+ * 1. Use a real-time database/storage/cache solution to make the roles avaialble 'all' the time.
+ */
+
 const Accesscontrol = require('accesscontrol');
 const ac = new Accesscontrol();
 

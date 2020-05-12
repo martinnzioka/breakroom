@@ -1,5 +1,6 @@
 const { roles } = require('../roles');
 
+// Grants access to various CRUD operations for the content posted.
 exports.grantAcces = function(action, resource) {
     return async (req, res, next) => {
         try{
@@ -14,6 +15,7 @@ exports.grantAcces = function(action, resource) {
     }
 }
 
+// To check if one accessing the URI is logged-in.
 exports.allowIfLoggedIn = async (req, res, next) => {
     try {
         const user = res.locals.loggedInUser;

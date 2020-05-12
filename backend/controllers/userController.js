@@ -16,6 +16,7 @@
 const { pool } = require('../database/database');
 const { hasher, comparePassword } = require('pcypher');
 const jwt = require('jsonwebtoken');
+const validate = require('validator');
 
 exports.signup = (req, res, next) => {
     (async() => {
@@ -98,6 +99,7 @@ exports.signup = (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const { email, user_password } = req.body;
+        if (!(validate.isEmail(email))) return;
         pool.query(`SELECT user_id, email, userpassword, userRole FROM employeeDetails WHERE email = $1`, [email]).then(
             (user) => {
                 (async() => {
