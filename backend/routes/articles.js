@@ -1,7 +1,8 @@
-var express = require('express');
-var router = express.Router();
-var articleController = require('../controllers/articleController')
-var accessControl = require('../middlewares/accessControl');
+const express = require('express');
+
+const router = express.Router();
+const articleController = require('../controllers/articleController');
+const accessControl = require('../middlewares/accessControl');
 
 /* Create article */
 router.post('/post', accessControl.allowIfLoggedIn, accessControl.grantAcces('createOwn', 'fu-relation'), articleController.createArticle);
