@@ -1,3 +1,8 @@
+/**
+ * Testing Strategy.
+ * 1. Testing for null and undefined inputs and proper output handling of Errors and Logic handling. 
+*/
+
 const request = require('request');
 const server = require('../bin/www');
 

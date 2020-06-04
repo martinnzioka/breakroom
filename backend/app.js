@@ -1,68 +1,49 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var jwt = require('jsonwebtoken');
-var { pool } = require('./database/database');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var gifRoute = require('./routes/gif')
-var articleRoute = require('./routes/articles')
+const csrf = require('csurf');
+const hpp = require('hpp');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const gifRoute = require('./routes/gif');
+const articleRoute = require('./routes/articles');
+const check = require('./middlewares/token-expiry');
+const { isItBusy } = require('./middlewares/too-busy');
+const { limiter } = require('./middlewares/rate-limit');
+const {
+  helmet, csp, expectCt, referrerPolicy, featurePolicy,
+} = require('./middlewares/helmet');
 
-var app = express();
+const app = express();
 
 app.use(logger('dev'));
 app.use((req, res, next) => {
-    res.set('X-Frame-Options', 'DENY');
-    res.set('Content-Security-Policy', "frame-ancestors 'none';");
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization, ');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    next();
+  res.set('X-Frame-Options', 'DENY');
+  res.set('Content-Security-Policy', "frame-ancestors 'none';");
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization, ');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  next();
 });
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(async(req, res, next) => {
-    if (req.headers['x-access-token']) {
-        const accessToken = req.headers['x-access-token'];
-        const { userId, exp } = await jwt.verify(accessToken, process.env.JWT_SECRET);
-        // Check if token has expired
-        if (exp < Date.now().valueOf() / 1000) {
-            return res.status(401).json({
-                status: 'unauthorized',
-                message: {
-                    error: 'Token has expired, please login to obtain a new one.'
-                }
-            });
-        } else {
-            try {
-                const data = await pool.query(`SELECT * FROM employeeDetails WHERE user_id = $1;`, [userId]);
-                res.locals.loggedInUser = data.rows[0];
-                next()
-            } catch (error) {
-                res.status(404).json({
-                    status: 'not found',
-                        message: {
-                            name: error.name,
-                            code: error.code,
-                            detail: error.detail,
-                            stack: error.stack
-                        }
-                });
-            }
-        }
-        
-    } else {
-        next()
-    }
-})
+app.use(express.json({ limit: '1kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(hpp());
+app.use(check.isTokenExpired);
+app.use(isItBusy);
 app.use(cookieParser());
+app.use(helmet());
+app.use(csp);
+app.use(expectCt);
+app.use(referrerPolicy);
+app.use(featurePolicy);
+app.use(csrf({ cookie: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/gifs', gifRoute);
-app.use('/articles', articleRoute);
+app.use('/users', limiter, usersRouter);
+app.use('/gifs', limiter, gifRoute);
+app.use('/articles', limiter, articleRoute);
 
 module.exports = app;
