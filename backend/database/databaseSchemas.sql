@@ -20,7 +20,7 @@ CREATE TABLE gifPosts (
     title TEXT DEFAULT '<No Title>',
     gifurl TEXT UNIQUE NOT NULL,
     createdon TIMESTAMP,
-    createdby BIGINT,
+    createdby_id BIGINT,
     gifdata JSON NOT NULL
 );
 
@@ -29,5 +29,14 @@ CREATE TABLE articlePosts (
     title TEXT DEFAULT '<No Title>',
     article TEXT NOT NULL,
     createdon VARCHAR(150) UNIQUE NOT NULL,
-    createdby BIGINT
+    createdby_id BIGINT
 );
+
+CREATE TABLE comments (
+    comment_id BIGSERIAL PRIMARY KEY,
+    comment TEXT,
+    post_id BIGINT NOT NULL,
+    user_id BIGINT,
+    createdon VARCHAR(150) UNIQUE NOT NULL
+);
+
