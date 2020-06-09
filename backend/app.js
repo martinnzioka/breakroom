@@ -9,6 +9,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const gifRoute = require('./routes/gif');
 const articleRoute = require('./routes/articles');
+const commentRoute = require('./routes/comment')
 const check = require('./middlewares/token-expiry');
 const { isItBusy } = require('./middlewares/too-busy');
 const { limiter } = require('./middlewares/rate-limit');
@@ -45,5 +46,6 @@ app.use('/', indexRouter);
 app.use('/users', limiter, usersRouter);
 app.use('/gifs', limiter, gifRoute);
 app.use('/articles', limiter, articleRoute);
+app.use('/comment', limiter, commentRoute);
 
 module.exports = app;
