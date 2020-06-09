@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const { Pool } = require('pg');
-const PgStore = require('express-brute-pg');
+//const PgStore = require('express-brute-pg');
 const Config = require('../config');
 
 // Test connection status.
@@ -9,12 +9,13 @@ const pool = new Pool({
   query_timeout: 200,
   statement_timeout: 200,
 });
+/*
 const store = new PgStore({
   connectionString: process.env.PGSTORE_URI || Config.postgresPgStoreConnectionString,
   query_timeout: 200,
   statement_timeout: 200,
 });
-
+*/
 async function connectionTest() {
   try {
     const res = await pool.query('SELECT NOW ()');
@@ -25,4 +26,4 @@ async function connectionTest() {
 }
 
 connectionTest();
-module.exports = { pool, store };
+module.exports = { pool };
