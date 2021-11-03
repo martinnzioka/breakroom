@@ -31,7 +31,7 @@
     "request": "^2.88.2",
     "svg-captcha": "^1.4.0",
     "toobusy-js": "^0.5.1",
-    "validator": "^13.0.0"
+    "validator": "^13.7.0"
   },
   "engines": {
     "node": "10.x"
